@@ -76,7 +76,7 @@ if (!localStorage.getItem('ss_seeded')) {
     {id:1,date:`${ym}-01`,desc:"Ijara",          amount:800000,category:"Ijara"},
     {id:2,date:`${ym}-02`,desc:"Elektr",         amount:120000,category:"Kommunal"},
     {id:3,date:`${ym}-04`,desc:"Ishchi maoshi",  amount:500000,category:"Maosh"},
-  ]);
+  ]);``
 
   // Shu belgini qo'yib qo'yamiz — endi hech qachon qayta yuklanmaydi
   localStorage.setItem('ss_seeded', '1');
