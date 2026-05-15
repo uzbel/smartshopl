@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SmartShop — Do'kon Boshqaruv Tizimi</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-text">&#9881; SmartShop</div>
+    <div class="logo-sub">Do'kon boshqaruv tizimi</div>
+  </div>
+  
+  <div class="nav-section">
+    <div class="nav-section-label">Asosiy</div>
+    <a class="nav-link" data-page="dashboard" onclick="navigate('dashboard')">
+      <span class="icon">&#9992;</span> Bosh sahifa
+    </a>
+    <a class="nav-link" data-page="today" onclick="navigate('today')">
+      <span class="icon">&#9728;</span> Bugungi sotuv
+    </a>
+    <a class="nav-link" data-page="sales" onclick="navigate('sales')">
+      <span class="icon">&#128722;</span> Sotish
+    </a>
+    <a class="nav-link" data-page="history" onclick="navigate('history')">
+      <span class="icon">&#128203;</span> Tarix
+    </a>
+  </div>
+  
+  <div class="nav-section">
+    <div class="nav-section-label">Mahsulotlar</div>
+    <a class="nav-link" data-page="products" onclick="navigate('products')">
+      <span class="icon">&#128230;</span> Mahsulotlar
+    </a>
+    <a class="nav-link" data-page="stock" onclick="navigate('stock')">
+      <span class="icon">&#127970;</span> Ombor
+    </a>
+  </div>
+  
+  <div class="nav-section">
+    <div class="nav-section-label">Moliya</div>
+    <a class="nav-link" data-page="expenses" onclick="navigate('expenses')">
+      <span class="icon">&#128178;</span> Xarajatlar
+    </a>
+    <a class="nav-link" data-page="owner" onclick="navigate('owner')">
+      <span class="icon">&#129380;</span> Egasi xarajati
+    </a>
+    <a class="nav-link" data-page="report" onclick="navigate('report')">
+      <span class="icon">&#128202;</span> Oylik hisobot
+    </a>
+  </div>
+  
+  <div class="nav-section" style="margin-top:auto">
+    <a class="nav-link" data-page="settings" onclick="navigate('settings')">
+      <span class="icon">&#9881;</span> Sozlamalar
+    </a>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:12px">
+      <div id="page-title" class="topbar-title">Bosh sahifa</div>
+    </div>
+    <div class="topbar-right">
+      <span class="topbar-date" id="topbar-date"></span>
+    </div>
+  </div>
+
+  <!-- PAGE: DASHBOARD -->
+  <div class="page active" id="page-dashboard">
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-label">&#9728; Bugungi tushum</div>
+        <div class="stat-value green" id="db-today-rev">0 so'm</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">&#128197; Oylik tushum</div>
+        <div class="stat-value purple" id="db-month-rev">0 so'm</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">&#128178; Oylik xarajat</div>
+        <div class="stat-value red" id="db-month-exp">0 so'm</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">&#128200; Oylik foyda</div>
+        <div class="stat-value green" id="db-profit">0 so'm</div>
+        <div class="profit-bar"><div class="profit-fill" id="db-profit-bar" style="width:0%"></div></div>
+        <div class="stat-sub" id="db-profit-pct"></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">&#128722; Bugungi sotuvlar</div>
+        <div class="stat-value yellow" id="db-sales-count">0</div>
+        <div class="stat-sub">tranzaksiya</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">&#9888; Kam qolgan</div>
+        <div class="stat-value red" id="db-low-stock">0</div>
+        <div class="stat-sub">mahsulot turi</div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="card-title">&#128203; So'nggi sotuvlar</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Vaqt</th><th>Mahsulot</th><th>Miqdor</th><th>Summa</th></tr></thead>
+          <tbody id="db-recent"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE: TODAY'S SALES -->
+  <div class="page" id="page-today">
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-label">&#128722; Bugungi sotuvlar soni</div>
+        <div class="stat-value yellow" id="today-count">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">&#128181; Jami tushum</div>
+        <div class="stat-value green" id="today-total">0 so'm</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">&#128200; Bugungi foyda</div>
+        <div class="stat-value purple" id="today-profit">0 so'm</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-header">
+        <div><div class="section-title">Bugun sotilgan mahsulotlar</div></div>
+        <button class="btn btn-outline btn-sm" onclick="window.print()">&#128438; Chop etish</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Vaqt</th><th>Mahsulot</th><th>Miqdor</th><th>Narx</th><th>Jami</th><th>Izoh</th><th></th></tr></thead>
+          <tbody id="today-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE: SALES FORM -->
+  <div class="page" id="page-sales">
+    <div style="max-width:560px">
+      <div class="section-header">
+        <div><div class="section-title">Yangi sotuv</div><div class="section-sub">Mahsulot sotishni qayd eting</div></div>
+      </div>
+      <div class="card" id="sale-form">
+        <div class="form-group">
+          <label class="form-label">&#128230; Mahsulot</label>
+          <select class="form-select" id="sale-product" onchange="calcSaleTotal()">
+            <option value="">Mahsulot tanlang</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">&#128290; Miqdor</label>
+          <input type="number" class="form-input" id="sale-qty" placeholder="Miqdor kiriting" min="0.1" step="0.1" oninput="calcSaleTotal()">
+        </div>
+        <div class="form-group">
+          <label class="form-label">&#128172; Izoh (ixtiyoriy)</label>
+          <input type="text" class="form-input" id="sale-note" placeholder="Izoh...">
+        </div>
+        <div style="background:var(--bg3);border-radius:8px;padding:14px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center">
+          <span style="color:var(--text2);font-size:14px">Jami summa:</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:var(--accent3)" id="sale-total-preview">0 so'm</span>
+        </div>
+        <button class="btn btn-success" style="width:100%" onclick="addSale()">&#10003; Sotuvni saqlash</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE: PRODUCTS -->
+  <div class="page" id="page-products">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Mahsulotlar</div>
+        <div class="section-sub">Barcha mahsulotlar ro'yxati</div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <div class="search-wrap">
+          <span class="si">&#128269;</span>
+          <input type="text" placeholder="Qidirish..." oninput="renderProducts(this.value)" id="prod-search">
+        </div>
+        <button class="btn btn-primary" onclick="openModal('modal-add-product')">&#43; Mahsulot qo'shish</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Mahsulot</th><th>Baho (xarid)</th><th>Baho (sotuv)</th><th>Ombor</th><th>Marjin</th><th>Amal</th></tr></thead>
+          <tbody id="prod-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE: STOCK -->
+  <div class="page" id="page-stock">
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-label">&#128230; Jami mahsulot turlari</div>
+        <div class="stat-value purple" id="stk-total">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">&#9888; Kam qolgan</div>
+        <div class="stat-value red" id="stk-low">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">&#128181; Ombor qiymati</div>
+        <div class="stat-value green" id="stk-value">0 so'm</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">&#127970; Ombor holati</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Mahsulot</th><th>Miqdor</th><th>Xarid narxi</th><th>Ombor qiymati</th><th>Amal</th></tr></thead>
+          <tbody id="stk-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE: EXPENSES -->
+  <div class="page" id="page-expenses">
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-label">&#128178; Oy xarajatlari jami</div>
+        <div class="stat-value red" id="exp-total">0 so'm</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">&#128203; Yozuvlar soni</div>
+        <div class="stat-value yellow" id="exp-count">0</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-header">
+        <div class="section-title">Do'kon xarajatlari</div>
+        <button class="btn btn-primary" onclick="openModal('modal-add-exp')">&#43; Xarajat qo'shish</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Sana</th><th>Tavsif</th><th>Kategoriya</th><th>Summa</th><th></th></tr></thead>
+          <tbody id="exp-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE: OWNER EXPENSES -->
+  <div class="page" id="page-owner">
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-label">&#129380; Oy ichida egasi olgan jami</div>
+        <div class="stat-value yellow" id="oe-total">0 so'm</div>
+      </div>
+    </div>
+    <div style="background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:var(--radius);padding:14px 18px;margin-bottom:20px;font-size:13px;color:var(--warning)">
+      &#9888; Bu bo'limda egasi do'kondan shaxsiy ehtiyoji uchun olgan mahsulot yoki pullar qayd etiladi. Bu summa oylik hisobotda xarajat sifatida ko'rsatiladi.
+    </div>
+    <div class="card">
+      <div class="section-header">
+        <div class="section-title">Egasi xarajatlari</div>
+        <button class="btn btn-primary" onclick="openModal('modal-add-oe')">&#43; Qo'shish</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Sana</th><th>Nima uchun</th><th>Izoh</th><th>Summa</th><th></th></tr></thead>
+          <tbody id="oe-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE: REPORT -->
+  <div class="page" id="page-report">
+    <div class="section-header">
+      <div><div class="section-title">Oylik hisobot</div></div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <input type="month" class="form-input" id="report-ym" style="width:160px" onchange="renderReport()">
+        <button class="btn btn-outline" onclick="window.print()">&#128438; Chop etish</button>
+      </div>
+    </div>
+    
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-label">&#128181; Jami tushum</div>
+        <div class="stat-value green" id="rp-revenue">0 so'm</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">&#128230; Mahsulot tannarxi (sotilgan)</div>
+        <div class="stat-value yellow" id="rp-cogs">0 so'm</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">&#128200; Yalpi foyda</div>
+        <div class="stat-value purple" id="rp-gross">0 so'm</div>
+      </div>
+    </div>
+    
+    <div class="two-col" style="margin-bottom:20px">
+      <div class="card">
+        <div class="card-title">&#128178; Xarajatlar taqsimoti</div>
+        <table style="font-size:14px">
+          <tr><td style="padding:10px 0;color:var(--text2)">Do'kon xarajatlari</td><td style="text-align:right;font-family:'JetBrains Mono',monospace;color:var(--danger)" id="rp-shopexp">—</td></tr>
+          <tr><td style="padding:10px 0;color:var(--text2)">Egasi xarajatlari</td><td style="text-align:right;font-family:'JetBrains Mono',monospace;color:var(--warning)" id="rp-ownerexp">—</td></tr>
+          <tr style="border-top:1px solid var(--border)"><td style="padding:14px 0 0;font-weight:700">Jami xarajat</td><td style="text-align:right;font-family:'JetBrains Mono',monospace;padding-top:14px;color:var(--danger);font-weight:700" id="rp-totalexp">—</td></tr>
+        </table>
+        <div style="margin-top:20px;padding-top:16px;border-top:2px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:15px;font-weight:700">&#128200; Sof foyda</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:800" id="rp-net">—</span>
+        </div>
+      </div>
+      
+      <div class="card">
+        <div class="card-title">&#127942; Top mahsulotlar</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>#</th><th>Mahsulot</th><th>Tushum</th></tr></thead>
+            <tbody id="rp-top"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE: HISTORY -->
+  <div class="page" id="page-history">
+    <div class="section-header">
+      <div><div class="section-title">Sotuv tarixi</div></div>
+      <div class="search-wrap">
+        <span class="si">&#128269;</span>
+        <input type="text" placeholder="Qidirish..." oninput="renderHistory(this.value)">
+      </div>
+    </div>
+    <div class="card">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Sana/Vaqt</th><th>Mahsulot</th><th>Miqdor</th><th>Narx</th><th>Jami</th><th>Izoh</th></tr></thead>
+          <tbody id="hist-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE: SETTINGS -->
+  <div class="page" id="page-settings">
+    <div style="max-width:520px">
+      <div class="section-title" style="margin-bottom:20px">Do'kon sozlamalari</div>
+      <div class="card" style="margin-bottom:20px">
+        <div class="card-title">Asosiy ma'lumotlar</div>
+        <div class="form-group">
+          <label class="form-label">Do'kon nomi</label>
+          <input type="text" class="form-input" id="set-shop-name" placeholder="SmartShop">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Egasi ismi</label>
+          <input type="text" class="form-input" id="set-owner" placeholder="Ismi Familiya">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Telefon</label>
+          <input type="text" class="form-input" id="set-phone" placeholder="+998 xx xxx xx xx">
+        </div>
+        <button class="btn btn-primary" onclick="saveSettings()">&#10003; Saqlash</button>
+      </div>
+      
+      <div class="card" style="border-color:rgba(248,113,113,.3)">
+        <div class="card-title" style="color:var(--danger)">&#9888; Xavfli zona</div>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:16px">Barcha ma'lumotlarni o'chirib tashlash. Bu amalni qaytarib bo'lmaydi!</p>
+        <button class="btn btn-danger" onclick="clearAllData()">&#128465; Barcha ma'lumotlarni o'chirish</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODALS -->
+
+<!-- Add Product -->
+<div class="modal-overlay" id="modal-add-product">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">&#43; Mahsulot qo'shish</div>
+      <button class="modal-close" onclick="closeModal('modal-add-product')">&#10005;</button>
+    </div>
+    <div id="add-prod-form">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Mahsulot nomi *</label>
+          <input type="text" class="form-input" id="p-name" placeholder="Mahsulot nomi">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Kategoriya</label>
+          <input type="text" class="form-input" id="p-cat" placeholder="Oziq-ovqat, Ichimlik...">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Xarid narxi (so'm) *</label>
+          <input type="number" class="form-input" id="p-buy" placeholder="0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Sotuv narxi (so'm) *</label>
+          <input type="number" class="form-input" id="p-sell" placeholder="0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Ombordagi miqdor *</label>
+          <input type="number" class="form-input" id="p-stock" placeholder="0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">O'lchov birligi</label>
+          <input type="text" class="form-input" id="p-unit" placeholder="dona, kg, litr...">
+        </div>
+      </div>
+      <button class="btn btn-primary" style="width:100%;margin-top:8px" onclick="addProduct()">&#43; Qo'shish</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Product -->
+<div class="modal-overlay" id="modal-edit-product">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">&#9998; Mahsulotni tahrirlash</div>
+      <button class="modal-close" onclick="closeModal('modal-edit-product')">&#10005;</button>
+    </div>
+    <input type="hidden" id="ep-id">
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label">Nomi</label>
+        <input type="text" class="form-input" id="ep-name">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Kategoriya</label>
+        <input type="text" class="form-input" id="ep-cat">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Xarid narxi</label>
+        <input type="number" class="form-input" id="ep-buy">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Sotuv narxi</label>
+        <input type="number" class="form-input" id="ep-sell">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Miqdor</label>
+        <input type="number" class="form-input" id="ep-stock">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Birlik</label>
+        <input type="text" class="form-input" id="ep-unit">
+      </div>
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-top:8px" onclick="saveEditProduct()">&#10003; Saqlash</button>
+  </div>
+</div>
+
+<!-- Add Expense -->
+<div class="modal-overlay" id="modal-add-exp">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">&#43; Xarajat qo'shish</div>
+      <button class="modal-close" onclick="closeModal('modal-add-exp')">&#10005;</button>
+    </div>
+    <div id="exp-form">
+      <div class="form-group">
+        <label class="form-label">Tavsif *</label>
+        <input type="text" class="form-input" id="exp-desc" placeholder="Ijara, elektr, maosh...">
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Summa (so'm) *</label>
+          <input type="number" class="form-input" id="exp-amount" placeholder="0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Sana</label>
+          <input type="date" class="form-input" id="exp-date">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Kategoriya</label>
+        <select class="form-select" id="exp-cat">
+          <option>Ijara</option>
+          <option>Kommunal</option>
+          <option>Maosh</option>
+          <option>Transport</option>
+          <option>Ta'mirlash</option>
+          <option>Boshqa</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" style="width:100%" onclick="addExpense()">&#43; Qo'shish</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Owner Expense -->
+<div class="modal-overlay" id="modal-add-oe">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">&#129380; Egasi xarajatini qo'shish</div>
+      <button class="modal-close" onclick="closeModal('modal-add-oe')">&#10005;</button>
+    </div>
+    <div id="oe-form">
+      <div class="form-group">
+        <label class="form-label">Nima uchun *</label>
+        <input type="text" class="form-input" id="oe-desc" placeholder="Tushlik, shaxsiy xarid...">
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Summa *</label>
+          <input type="number" class="form-input" id="oe-amount" placeholder="0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Sana</label>
+          <input type="date" class="form-input" id="oe-date">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Izoh</label>
+        <input type="text" class="form-input" id="oe-note" placeholder="Qo'shimcha ma'lumot">
+      </div>
+      <button class="btn btn-primary" style="width:100%" onclick="addOwnerExp()">&#43; Qo'shish</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
